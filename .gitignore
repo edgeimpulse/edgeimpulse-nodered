@@ -1,0 +1,5 @@
+data/.npm/
+data/node_modules/
+data/*.backup
+data/model/run-impulse-from-node-red.js.zip
+.DS_Store

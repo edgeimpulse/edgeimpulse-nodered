@@ -11,7 +11,7 @@
         "id": "53e07aceda5fff83",
         "type": "file in",
         "z": "d59158a49b9b1aba",
-        "name": "Read image",
+        "name": "Read image (jan.jpg)",
         "filename": "/data/images/jan.jpg",
         "filenameType": "str",
         "format": "",
@@ -19,7 +19,7 @@
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 510,
+        "x": 540,
         "y": 340,
         "wires": [
             [
@@ -77,18 +77,103 @@
         "id": "8c8207acd701d919",
         "type": "function",
         "z": "d59158a49b9b1aba",
-        "name": "function 1",
-        "func": "// so we'll receive msg.payload here (type is a Buffer)\nconst EdgeImpulseClassifier = require('/data/model/run-impulse');\n\n// Initialize the classifier, and invoke with the argument passed in\nlet classifier = new EdgeImpulseClassifier();\nawait classifier.init();\n\nlet project = classifier.getProjectInfo();\nconsole.log('Running inference for', project.owner + ' / ' + project.name + ' (version ' + project.deploy_version + ')');\n\nlet result = classifier.classify(msg.payload);\nmsg.payload = result;\n\nreturn msg;\n",
+        "name": "Run classifier",
+        "func": "// this is declared in settings.js:\n// functionGlobalContext: {\n//    EdgeImpulseClassifier: require('./model/run-impulse'),\n// },\nconst EdgeImpulseClassifier = global.get('EdgeImpulseClassifier');\n\n// Initialize the classifier, and invoke with the argument passed in\nlet classifier = new EdgeImpulseClassifier();\nawait classifier.init();\n\nlet project = classifier.getProjectInfo();\nconsole.log('Running inference for', project.owner + ' / ' + project.name + ' (version ' + project.deploy_version + ')');\n\nlet result = await classifier.classifyImage(msg.payload);\nmsg.payload = result;\n\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
+        "x": 740,
         "y": 340,
         "wires": [
             [
                 "417458762fefbd9f"
+            ]
+        ]
+    },
+    {
+        "id": "0f55e38b1b6c348f",
+        "type": "file in",
+        "z": "d59158a49b9b1aba",
+        "name": "Read image (not-jan.jpg)",
+        "filename": "/data/images/not-jan.jpg",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 550,
+        "y": 440,
+        "wires": [
+            [
+                "bcc6cfd525b70275"
+            ]
+        ]
+    },
+    {
+        "id": "cd11ef9cc19ae668",
+        "type": "debug",
+        "z": "d59158a49b9b1aba",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "b2816b20ce4c2448",
+        "type": "inject",
+        "z": "d59158a49b9b1aba",
+        "name": "Start image classification",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Start image classification",
+        "payloadType": "str",
+        "x": 290,
+        "y": 440,
+        "wires": [
+            [
+                "0f55e38b1b6c348f"
+            ]
+        ]
+    },
+    {
+        "id": "bcc6cfd525b70275",
+        "type": "function",
+        "z": "d59158a49b9b1aba",
+        "name": "Run classifier",
+        "func": "// this is declared in settings.js:\n// functionGlobalContext: {\n//    EdgeImpulseClassifier: require('./model/run-impulse'),\n// },\nconst EdgeImpulseClassifier = global.get('EdgeImpulseClassifier');\n\n// Initialize the classifier, and invoke with the argument passed in\nlet classifier = new EdgeImpulseClassifier();\nawait classifier.init();\n\nlet project = classifier.getProjectInfo();\nconsole.log('Running inference for', project.owner + ' / ' + project.name + ' (version ' + project.deploy_version + ')');\n\nlet result = await classifier.classifyImage(msg.payload);\nmsg.payload = result;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 440,
+        "wires": [
+            [
+                "cd11ef9cc19ae668"
             ]
         ]
     }

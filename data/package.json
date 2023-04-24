@@ -1,6 +1,9 @@
 {
-    "name": "node-red-project",
-    "description": "A Node-RED Project",
+    "name": "edge-impulse-node-red-classification-demo",
+    "description": "Classify images in Node-RED",
     "version": "0.0.1",
-    "private": true
+    "private": true,
+    "dependencies": {
+        "sharp": "0.32.0"
+    }
 }

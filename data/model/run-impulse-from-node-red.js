@@ -1,6 +1,6 @@
 // Load the inferencing WebAssembly module
 const Module = require('./edge-impulse-standalone');
-const fs = require('fs');
+const sharp = require('sharp');
 
 // Classifier module
 let classifierInitialized = false;
@@ -41,7 +41,6 @@ class EdgeImpulseClassifier {
             throw new Error('Classification failed (err code: ' + ret.result + ')');
         }
 
-
         let jsResult = {
             anomaly: ret.anomaly,
             results: []
@@ -61,6 +60,33 @@ class EdgeImpulseClassifier {
         ret.delete();
 
         return jsResult;
+    }
+
+    async classifyImage(buffer) {
+        const props = Module.get_properties();
+
+        if (props.sensor !== 3 /* CAMERA */) {
+            throw new Error('Model sensor is not CAMERA (' + props.sensor + '), use `classify` instead');
+        }
+
+        const image = await sharp(buffer).resize({
+            width: props.image_input_width,
+            height: props.image_input_height,
+        }).raw().toBuffer();
+
+        let features = [];
+
+        for (let ix = 0; ix < image.length; ix += 3) {
+            let r = image[ix + 0];
+            let g = image[ix + 1];
+            let b = image[ix + 2];
+            // tslint:disable-next-line: no-bitwise
+            features.push((r << 16) + (g << 8) + b);
+        }
+
+        console.log('features length', features.length);
+
+        return this.classify(features, false);
     }
 
     classifyContinuous(rawData, enablePerfCal = true) {
