@@ -7,8 +7,8 @@ This is an example that shows how you can integrate models trained in [Edge Impu
 1. Build and start the container:
 
     ```
-    docker build -t honeywell-nodered .
-    docker run --rm -it -p 1880:1880 -v $PWD/data:/data -v honeywell_node_modules:/data/node_modules --name honeywell honeywell-nodered
+    docker build -t ei-nodered .
+    docker run --rm -it -p 1880:1880 -v $PWD/data:/data -v ei_node_modules:/data/node_modules ei-nodered
     ```
 
 2. Open Node-RED at http://localhost:1880
